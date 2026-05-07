@@ -22,6 +22,13 @@ const dashboardRoutes = require('./routes/dashboard');
 
 app.use('/dashboard', dashboardRoutes);
 
+const authRoutes =
+require('./routesAuth');
+
+app.use('/auth', authRoutes);
+
+
+
   
 });
 
