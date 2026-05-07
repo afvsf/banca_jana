@@ -13,6 +13,10 @@ app.get('/', (req, res) => {
 const alunosRoutes = require('./routes/alunos');
 
 app.use('/alunos', alunosRoutes);
+
+const mensalidadesRoutes = require('./routes/mensalidades');
+
+app.use('/mensalidades', mensalidadesRoutes);
   
 });
 
