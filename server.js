@@ -6,21 +6,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.get('/', auth, (req, res) => {
   res.send('API Sistema Banca Alunos');
 
 
 const alunosRoutes = require('./routes/alunos');
 
-app.use('/alunos', alunosRoutes);
+app.use('/alunos', auth, alunosRoutes);
 
 const mensalidadesRoutes = require('./routes/mensalidades');
 
-app.use('/mensalidades', mensalidadesRoutes);
+app.use('/mensalidades', auth, mensalidadesRoutes);
 
 const dashboardRoutes = require('./routes/dashboard');
 
-app.use('/dashboard', dashboardRoutes);
+app.use('/dashboard', auth, dashboardRoutes);
 
 const authRoutes =
 require('./routesAuth');
