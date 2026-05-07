@@ -8,6 +8,12 @@ app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send('API Sistema Banca Alunos');
+
+
+const alunosRoutes = require('./routes/alunos');
+
+app.use('/alunos', alunosRoutes);
+  
 });
 
 app.listen(process.env.PORT || 3000, () => {
