@@ -5,7 +5,7 @@ const ExcelJS = require('exceljs');
 
 const PDFDocument = require('pdfkit');
 
-const pool = require('../database/db');
+const pool = require('../db');
 
 
 // ======================================
