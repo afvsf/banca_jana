@@ -1,40 +1,60 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 
-const app = express();
+const auth = require('./middleAuth');
 
-app.use(cors());
-app.use(express.json());
+const alunosRoutes =
+require('./alunos');
 
-app.get('/', auth, (req, res) => {
-  res.send('API Sistema Banca Alunos');
+const mensalidadesRoutes =
+require('./mensalidades');
 
-
-const alunosRoutes = require('./routes/alunos');
-
-app.use('/alunos', auth, alunosRoutes);
-
-const mensalidadesRoutes = require('./routes/mensalidades');
-
-app.use('/mensalidades', auth, mensalidadesRoutes);
-
-const dashboardRoutes = require('./routes/dashboard');
-
-app.use('/dashboard', auth, dashboardRoutes);
+const dashboardRoutes =
+require('./dashboard');
 
 const authRoutes =
-require('./routesAuth');
-
-app.use('/auth', authRoutes);
+require('./auth');
 
 const relatoriosRoutes =
 require('./relatorios');
 
-app.use('/relatorios', auth,  relatoriosRoutes);
+const app = express();
 
-  
+app.use(cors());
+
+app.use(express.json());
+
+
+// ROTAS
+
+app.use('/auth', authRoutes);
+
+app.use('/alunos', alunosRoutes);
+
+app.use('/mensalidades', mensalidadesRoutes);
+
+app.use('/dashboard', dashboardRoutes);
+
+app.use('/relatorios', relatoriosRoutes);
+
+
+// TESTE API
+
+app.get('/', auth, (req, res) => {
+
+    res.send('API ONLINE');
+
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Servidor rodando');
+
+const PORT =
+process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+
+    console.log(
+        `Servidor rodando porta ${PORT}`
+    );
+
 });
