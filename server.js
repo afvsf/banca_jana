@@ -27,7 +27,10 @@ require('./routesAuth');
 
 app.use('/auth', authRoutes);
 
+const relatoriosRoutes =
+require('./relatorios');
 
+app.use('/relatorios', auth,  relatoriosRoutes);
 
   
 });
