@@ -17,6 +17,11 @@ app.use('/alunos', alunosRoutes);
 const mensalidadesRoutes = require('./routes/mensalidades');
 
 app.use('/mensalidades', mensalidadesRoutes);
+
+const dashboardRoutes = require('./routes/dashboard');
+
+app.use('/dashboard', dashboardRoutes);
+
   
 });
 
