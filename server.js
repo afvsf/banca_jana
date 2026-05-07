@@ -25,6 +25,13 @@ app.use(cors());
 
 app.use(express.json());
 
+// CRIAR TABELAS
+
+const createTables =
+require('./createTables');
+
+createTables();
+
 
 // ROTAS
 
