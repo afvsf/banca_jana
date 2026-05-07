@@ -41,7 +41,7 @@ app.use('/relatorios', relatoriosRoutes);
 
 // TESTE API
 
-app.get('/', auth, (req, res) => {
+app.get('/', (req, res) => {
 
     res.send('API ONLINE');
 
