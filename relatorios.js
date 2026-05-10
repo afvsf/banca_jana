@@ -7,6 +7,8 @@ const PDFDocument = require('pdfkit');
 
 const pool = require('./db');
 
+const auth = require('./middleAuth');
+
 
 // ======================================
 // PDF FINANCEIRO
