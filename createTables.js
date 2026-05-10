@@ -49,11 +49,11 @@ async function createTables(){
 
                 status VARCHAR(20)
                 DEFAULT 'ATIVO',
-
-                dia_vencimento INTEGER DEFAULT 10,
-
+            
                 created_at TIMESTAMP
-                DEFAULT NOW()
+                DEFAULT NOW(),
+
+                dia_vencimento INTEGER DEFAULT 10
 
             )
 
