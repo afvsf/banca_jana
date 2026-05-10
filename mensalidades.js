@@ -130,33 +130,44 @@ router.post('/gerar/:aluno_id', auth, async (req, res) => {
 // PAGAR MENSALIDADE
 // ======================================
 
-router.put('/pagar/:id', async (req, res) => {
+router.put('/pagar/:id', auth, async (req, res) => {
 
-    try {
+    try{
 
         const {
-            forma_pagamento,
-            valor_pago
+            valor_pago,
+            forma_pagamento
         } = req.body;
 
-        const result = await pool.query(`
+        await pool.query(`
+
             UPDATE mensalidades
+
             SET
-                status = 'PAGO',
-                forma_pagamento = $1,
-                valor_pago = $2,
-                data_pagamento = CURRENT_DATE
+
+                valor_pago = $1,
+
+                forma_pagamento = $2,
+
+                data_pagamento = NOW(),
+
+                status = 'PAGO'
+
             WHERE id = $3
-            RETURNING *
-        `, [
-            forma_pagamento,
+
+        `,
+
+        [
             valor_pago,
+            forma_pagamento,
             req.params.id
         ]);
 
-        res.json(result.rows[0]);
+        res.json({
+            sucesso: true
+        });
 
-    } catch (error) {
+    }catch(error){
 
         res.status(500).json(error);
 
