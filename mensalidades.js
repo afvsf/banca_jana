@@ -9,7 +9,7 @@ const auth = require('./middleAuth');
 // LISTAR TODAS
 // ======================================
 
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
 
     try {
 
