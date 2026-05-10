@@ -90,24 +90,35 @@ router.put('/:id', async (req, res) => {
             nome,
             responsavel,
             telefone,
-            valor_mensalidade
+            valor_mensalidade,
+            data_matricula
         } = req.body;
 
         const result = await pool.query(`
+
             UPDATE alunos
+
             SET
+
                 nome = $1,
                 responsavel = $2,
                 telefone = $3,
-                valor_mensalidade = $4
-            WHERE id = $5
+                valor_mensalidade = $4,
+                data_matricula = $5
+
+            WHERE id = $6
+
             RETURNING *
+
         `, [
+
             nome,
             responsavel,
             telefone,
             valor_mensalidade,
+            data_matricula,
             req.params.id
+
         ]);
 
         res.json(result.rows[0]);
