@@ -44,8 +44,18 @@ router.get('/aluno/:id', async (req, res) => {
     try {
 
         const result = await pool.query(`
-            SELECT *
+            SELECT
+
+            mensalidades.*,
+
+            alunos.nome AS aluno
+
             FROM mensalidades
+
+            INNER JOIN alunos
+            ON alunos.id = mensalidades.aluno_id
+
+            ORDER BY mensalidades.id DESC
             WHERE aluno_id = $1
             ORDER BY referencia_mes ASC
         `, [req.params.id]);
