@@ -3,6 +3,7 @@ const router = express.Router();
 
 const pool = require('./db');
 
+const auth = require('./middleAuth');
 
 // ======================================
 // LISTAR TODAS
