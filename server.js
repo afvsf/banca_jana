@@ -4,6 +4,9 @@ require('dotenv').config();
 
 const auth = require('./middleAuth');
 
+const createAdmin =
+require('./createAdmin');
+
 const alunosRoutes =
 require('./alunos');
 
