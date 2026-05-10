@@ -35,6 +35,8 @@ require('./createTables');
 
 createTables();
 
+createAdmin();
+
 
 // ROTAS
 
