@@ -50,6 +50,8 @@ async function createTables(){
                 status VARCHAR(20)
                 DEFAULT 'ATIVO',
 
+                dia_vencimento INTEGER DEFAULT 10,
+
                 created_at TIMESTAMP
                 DEFAULT NOW()
 
@@ -57,15 +59,7 @@ async function createTables(){
 
         `);
 
-        await pool.query(`
-
-        ALTER TABLE alunos
-
-        ADD COLUMN IF NOT EXISTS
-        dia_vencimento INTEGER DEFAULT 10
-
-    `);
-
+  
 
         // =====================================
         // TABELA MENSALIDADES
