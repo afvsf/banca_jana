@@ -64,7 +64,7 @@ router.get('/aluno/:id', async (req, res) => {
 // GERAR 12 MENSALIDADES
 // ======================================
 
-router.post('/gerar/:aluno_id', async (req, res) => {
+router.post('/gerar/:aluno_id', auth, async (req, res) => {
 
     try {
 
