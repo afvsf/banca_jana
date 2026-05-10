@@ -62,62 +62,143 @@ router.get('/aluno/:id', async (req, res) => {
 
 
 // ======================================
-// GERAR 12 MENSALIDADES
+// GERAR MENSALIDADES ANUAL
 // ======================================
 
-router.post('/gerar/:aluno_id', auth, async (req, res) => {
+router.post('/gerar-anual', auth, async (req, res) => {
 
-    try {
+    try{
 
-        const aluno = await pool.query(`
-            SELECT *
-            FROM alunos
-            WHERE id = $1
-        `, [req.params.aluno_id]);
-
-        if (aluno.rows.length === 0) {
-
-            return res.status(404).json({
-                erro: 'Aluno não encontrado'
-            });
-
-        }
-
-        const dadosAluno = aluno.rows[0];
-
-        const anoAtual = new Date().getFullYear();
-
-        for (let mes = 1; mes <= 12; mes++) {
-
-            const vencimento =
-                `${anoAtual}-${String(mes).padStart(2,'0')}-${String(dadosAluno.vencimento_dia).padStart(2,'0')}`;
-
+        const alunos =
             await pool.query(`
-                INSERT INTO mensalidades (
-                    aluno_id,
-                    referencia_mes,
-                    referencia_ano,
-                    data_vencimento,
-                    valor,
-                    status
-                )
-                VALUES ($1,$2,$3,$4,$5,$6)
-            `, [
-                req.params.aluno_id,
-                mes,
-                anoAtual,
-                vencimento,
-                dadosAluno.valor_mensalidade,
-                'PENDENTE'
-            ]);
+
+                SELECT *
+                FROM alunos
+
+                WHERE status = 'ATIVO'
+
+            `);
+
+        for(const aluno of alunos.rows){
+
+            const matricula =
+                new Date(
+                    aluno.data_matricula
+                );
+
+            let mes =
+                matricula.getMonth() + 1;
+
+            let ano =
+                matricula.getFullYear();
+
+            // regra inteligente
+
+            if(
+                matricula.getDate()
+                >
+                aluno.dia_vencimento
+            ){
+
+                mes++;
+
+            }
+
+            // gera até dezembro
+
+            while(mes <= 12){
+
+                const existe =
+                    await pool.query(`
+
+                        SELECT id
+                        FROM mensalidades
+
+                        WHERE aluno_id = $1
+
+                        AND referencia_mes = $2
+
+                        AND referencia_ano = $3
+
+                    `,
+
+                    [
+                        aluno.id,
+                        mes,
+                        ano
+                    ]);
+
+                if(existe.rows.length === 0){
+
+                    const vencimento =
+
+                        `${ano}-${
+                            String(mes)
+                            .padStart(2,'0')
+                        }-${
+                            String(aluno.dia_vencimento)
+                            .padStart(2,'0')
+                        }`;
+
+                    await pool.query(`
+
+                        INSERT INTO mensalidades
+                        (
+
+                            aluno_id,
+
+                            referencia_mes,
+
+                            referencia_ano,
+
+                            valor,
+
+                            data_vencimento,
+
+                            status
+
+                        )
+
+                        VALUES
+                        ($1,$2,$3,$4,$5,$6)
+
+                    `,
+
+                    [
+
+                        aluno.id,
+
+                        mes,
+
+                        ano,
+
+                        aluno.valor_mensalidade,
+
+                        vencimento,
+
+                        'PENDENTE'
+
+                    ]);
+
+                }
+
+                mes++;
+
+            }
 
         }
 
         res.json({
-            mensagem: '12 mensalidades geradas'
+
+            sucesso: true,
+            mensagem:
+            'Mensalidades anuais geradas'
+
         });
 
-    } catch (error) {
+    }catch(error){
+
+        console.log(error);
 
         res.status(500).json(error);
 
