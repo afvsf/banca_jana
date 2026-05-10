@@ -47,37 +47,137 @@ router.post('/', async (req, res) => {
     try {
 
         const {
+
             nome,
-            data_matricula,
             responsavel,
             telefone,
             valor_mensalidade,
+            data_matricula,
             dia_vencimento
+
         } = req.body;
 
+        // CADASTRA ALUNO
+
         const result = await pool.query(`
-            INSERT INTO alunos (
+
+            INSERT INTO alunos
+            (
+
                 nome,
-                data_matricula,
                 responsavel,
                 telefone,
                 valor_mensalidade,
+                data_matricula,
                 dia_vencimento
+
             )
-            VALUES ($1,$2,$3,$4,$5,$6)
+
+            VALUES
+            ($1,$2,$3,$4,$5,$6)
+
             RETURNING *
+
         `, [
+
             nome,
-            data_matricula,
             responsavel,
             telefone,
             valor_mensalidade,
+            data_matricula,
             dia_vencimento
+
         ]);
 
-        res.json(result.rows[0]);
+        const aluno =
+            result.rows[0];
+
+        // GERA MENSALIDADES
+
+        const matricula =
+            new Date(
+                aluno.data_matricula
+            );
+
+        let mes =
+            matricula.getMonth() + 1;
+
+        let ano =
+            matricula.getFullYear();
+
+        // REGRA INTELIGENTE
+
+        if(
+            matricula.getDate()
+            >
+            aluno.dia_vencimento
+        ){
+
+            mes++;
+
+        }
+
+        // GERA ATÉ DEZEMBRO
+
+        while(mes <= 12){
+
+            const vencimento =
+
+                `${ano}-${
+                    String(mes)
+                    .padStart(2,'0')
+                }-${
+                    String(aluno.dia_vencimento)
+                    .padStart(2,'0')
+                }`;
+
+            await pool.query(`
+
+                INSERT INTO mensalidades
+                (
+
+                    aluno_id,
+
+                    referencia_mes,
+
+                    referencia_ano,
+
+                    valor,
+
+                    data_vencimento,
+
+                    status
+
+                )
+
+                VALUES
+                ($1,$2,$3,$4,$5,$6)
+
+            `, [
+
+                aluno.id,
+
+                mes,
+
+                ano,
+
+                aluno.valor_mensalidade,
+
+                vencimento,
+
+                'PENDENTE'
+
+            ]);
+
+            mes++;
+
+        }
+
+        res.json(aluno);
 
     } catch (error) {
+
+        console.log(error);
 
         res.status(500).json(error);
 
