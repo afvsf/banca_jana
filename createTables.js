@@ -57,6 +57,15 @@ async function createTables(){
 
         `);
 
+        await pool.query(`
+
+        ALTER TABLE alunos
+
+        ADD COLUMN IF NOT EXISTS
+        dia_vencimento INTEGER DEFAULT 10
+
+    `);
+
 
         // =====================================
         // TABELA MENSALIDADES
