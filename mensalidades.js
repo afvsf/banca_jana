@@ -14,29 +14,52 @@ router.get('/', auth, async (req, res) => {
     try {
 
         const result = await pool.query(`
-            SELECT
 
-    m.*,
+    SELECT
 
-    a.nome AS aluno,
+        m.id,
+        m.aluno_id,
+        m.referencia_mes,
+        m.referencia_ano,
+        m.valor,
+        m.valor_pago,
+        m.forma_pagamento,
+        m.status,
 
-    CASE
+        TO_CHAR(
+            m.data_vencimento,
+            'DD/MM/YYYY'
+        ) AS data_vencimento,
 
-        WHEN m.status = 'PENDENTE'
+        TO_CHAR(
+            m.data_pagamento,
+            'DD/MM/YYYY'
+        ) AS data_pagamento,
 
-        AND m.data_vencimento < CURRENT_DATE
+        a.nome AS aluno,
 
-        THEN CURRENT_DATE - m.data_vencimento
+        CASE
 
-        ELSE 0
+            WHEN m.status = 'PENDENTE'
 
-    END AS dias_atraso
-            FROM mensalidades m
-            INNER JOIN alunos a
-            ON a.id = m.aluno_id
-            ORDER BY m.referencia_ano DESC,
-                     m.referencia_mes ASC
-        `);
+            AND m.data_vencimento < CURRENT_DATE
+
+            THEN CURRENT_DATE - m.data_vencimento
+
+            ELSE 0
+
+        END AS dias_atraso
+
+    FROM mensalidades m
+
+    INNER JOIN alunos a
+    ON a.id = m.aluno_id
+
+    ORDER BY
+        m.referencia_ano DESC,
+        m.referencia_mes ASC
+
+`);
 
         res.json(result.rows);
 
