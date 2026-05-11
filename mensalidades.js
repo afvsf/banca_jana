@@ -217,6 +217,126 @@ router.post('/gerar-anual', auth, async (req, res) => {
 });
 
 
+router.post('/renovar-anual', auth, async (req, res) => {
+
+    try{
+
+        const alunos =
+            await pool.query(`
+
+                SELECT *
+                FROM alunos
+
+                WHERE status = 'ATIVO'
+
+            `);
+
+        const novoAno =
+            new Date().getFullYear() + 1;
+
+        for(const aluno of alunos.rows){
+
+            for(let mes = 1; mes <= 12; mes++){
+
+                // evita duplicar
+
+                const existe =
+                    await pool.query(`
+
+                        SELECT id
+                        FROM mensalidades
+
+                        WHERE aluno_id = $1
+
+                        AND referencia_mes = $2
+
+                        AND referencia_ano = $3
+
+                    `,
+
+                    [
+                        aluno.id,
+                        mes,
+                        novoAno
+                    ]);
+
+                if(existe.rows.length === 0){
+
+                    const vencimento =
+
+                        `${novoAno}-${
+                            String(mes)
+                            .padStart(2,'0')
+                        }-${
+                            String(aluno.dia_vencimento)
+                            .padStart(2,'0')
+                        }`;
+
+                    await pool.query(`
+
+                        INSERT INTO mensalidades
+                        (
+
+                            aluno_id,
+
+                            referencia_mes,
+
+                            referencia_ano,
+
+                            valor,
+
+                            data_vencimento,
+
+                            status
+
+                        )
+
+                        VALUES
+                        ($1,$2,$3,$4,$5,$6)
+
+                    `,
+
+                    [
+
+                        aluno.id,
+
+                        mes,
+
+                        novoAno,
+
+                        aluno.valor_mensalidade,
+
+                        vencimento,
+
+                        'PENDENTE'
+
+                    ]);
+
+                }
+
+            }
+
+        }
+
+        res.json({
+
+            sucesso: true,
+
+            mensagem:
+            `Mensalidades ${novoAno} geradas`
+
+        });
+
+    }catch(error){
+
+        console.log(error);
+
+        res.status(500).json(error);
+
+    }
+
+});
+
 // ======================================
 // PAGAR MENSALIDADE
 // ======================================
