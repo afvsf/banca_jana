@@ -400,7 +400,8 @@ router.put('/pagar/:id', auth, async (req, res) => {
 
         const {
             valor_pago,
-            forma_pagamento
+            forma_pagamento,
+            data_pagamento
         } = req.body;
 
         await pool.query(`
@@ -413,17 +414,18 @@ router.put('/pagar/:id', auth, async (req, res) => {
 
                 forma_pagamento = $2,
 
-                data_pagamento = NOW(),
+                data_pagamento = $3,
 
                 status = 'PAGO'
 
-            WHERE id = $3
+            WHERE id = $4
 
         `,
 
         [
             valor_pago,
             forma_pagamento,
+            data_pagamento,
             req.params.id
         ]);
 
