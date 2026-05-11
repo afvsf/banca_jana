@@ -622,4 +622,89 @@ async (req, res) => {
 
 });
 
+router.get(
+'/relatorio/periodo',
+
+auth,
+
+async (req, res) => {
+
+    try{
+
+        const {
+            inicio,
+            fim,
+            status
+        } = req.query;
+
+        let sql = `
+
+            SELECT
+
+                m.*,
+
+                a.nome AS aluno,
+
+                CASE
+
+                    WHEN m.status = 'PENDENTE'
+
+                    AND m.data_vencimento < CURRENT_DATE
+
+                    THEN CURRENT_DATE - m.data_vencimento
+
+                    ELSE 0
+
+                END AS dias_atraso
+
+            FROM mensalidades m
+
+            INNER JOIN alunos a
+            ON a.id = m.aluno_id
+
+            WHERE
+
+                m.data_vencimento
+                BETWEEN $1 AND $2
+
+        `;
+
+        const params = [
+            inicio,
+            fim
+        ];
+
+        if(status){
+
+            sql += `
+                AND m.status = $3
+            `;
+
+            params.push(status);
+
+        }
+
+        sql += `
+            ORDER BY
+            m.data_vencimento ASC
+        `;
+
+        const result =
+            await pool.query(
+                sql,
+                params
+            );
+
+        res.json(result.rows);
+
+    }catch(error){
+
+        console.log(error);
+
+        res.status(500).json(error);
+
+    }
+
+});
+
 module.exports = router;
