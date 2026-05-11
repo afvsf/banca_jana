@@ -460,6 +460,69 @@ router.get('/devedores', async (req, res) => {
 
 });
 
+router.get(
+'/relatorio/devedores-mes',
+
+auth,
+
+async (req, res) => {
+
+    try{
+
+        const hoje =
+            new Date();
+
+        const mes =
+            hoje.getMonth() + 1;
+
+        const ano =
+            hoje.getFullYear();
+
+        const result =
+            await pool.query(`
+
+                SELECT
+
+                    a.nome,
+
+                    a.telefone,
+
+                    m.valor,
+
+                    m.data_vencimento,
+
+                    CURRENT_DATE - m.data_vencimento
+                    AS dias_atraso
+
+                FROM mensalidades m
+
+                INNER JOIN alunos a
+                ON a.id = m.aluno_id
+
+                WHERE
+
+                    m.status = 'PENDENTE'
+
+                    AND m.referencia_mes = $1
+
+                    AND m.referencia_ano = $2
+
+                ORDER BY dias_atraso DESC
+
+            `,
+
+            [mes, ano]);
+
+        res.json(result.rows);
+
+    }catch(error){
+
+        res.status(500).json(error);
+
+    }
+
+});
+
 
 // ======================================
 // RELATÓRIO PAGOS
@@ -491,6 +554,67 @@ router.get('/pagos', async (req, res) => {
         res.json(result.rows);
 
     } catch (error) {
+
+        res.status(500).json(error);
+
+    }
+
+});
+
+router.get(
+'/relatorio/pagantes-mes',
+
+auth,
+
+async (req, res) => {
+
+    try{
+
+        const hoje =
+            new Date();
+
+        const mes =
+            hoje.getMonth() + 1;
+
+        const ano =
+            hoje.getFullYear();
+
+        const result =
+            await pool.query(`
+
+                SELECT
+
+                    a.nome,
+
+                    m.valor_pago,
+
+                    m.forma_pagamento,
+
+                    m.data_pagamento
+
+                FROM mensalidades m
+
+                INNER JOIN alunos a
+                ON a.id = m.aluno_id
+
+                WHERE
+
+                    m.status = 'PAGO'
+
+                    AND m.referencia_mes = $1
+
+                    AND m.referencia_ano = $2
+
+                ORDER BY
+                m.data_pagamento DESC
+
+            `,
+
+            [mes, ano]);
+
+        res.json(result.rows);
+
+    }catch(error){
 
         res.status(500).json(error);
 
