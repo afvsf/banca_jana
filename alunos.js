@@ -237,20 +237,47 @@ router.put('/:id', async (req, res) => {
 
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
 
     try {
 
-        await pool.query(
-            'DELETE FROM alunos WHERE id = $1',
-            [req.params.id]
-        );
+        // remove mensalidades do aluno
+
+        await pool.query(`
+
+            DELETE FROM mensalidades
+
+            WHERE aluno_id = $1
+
+        `, [
+
+            req.params.id
+
+        ]);
+
+        // remove aluno
+
+        await pool.query(`
+
+            DELETE FROM alunos
+
+            WHERE id = $1
+
+        `, [
+
+            req.params.id
+
+        ]);
 
         res.json({
-            mensagem: 'Aluno removido'
+
+            sucesso: true
+
         });
 
     } catch (error) {
+
+        console.log(error);
 
         res.status(500).json(error);
 
