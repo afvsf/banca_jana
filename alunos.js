@@ -77,7 +77,8 @@ router.post('/', async (req, res) => {
             telefone,
             valor_mensalidade,
             data_matricula,
-            dia_vencimento
+            dia_vencimento,
+            turma_id
 
         } = req.body;
 
@@ -93,12 +94,13 @@ router.post('/', async (req, res) => {
                 telefone,
                 valor_mensalidade,
                 data_matricula,
-                dia_vencimento
+                dia_vencimento,
+                turma_id
 
             )
 
             VALUES
-            ($1,$2,$3,$4,$5,$6)
+            ($1,$2,$3,$4,$5,$6,$7)
 
             RETURNING *
 
@@ -109,7 +111,8 @@ router.post('/', async (req, res) => {
             telefone,
             valor_mensalidade,
             data_matricula,
-            dia_vencimento
+            dia_vencimento,
+            turma_id
 
         ]);
 
@@ -219,7 +222,8 @@ router.put('/:id', async (req, res) => {
             telefone,
             valor_mensalidade,
             data_matricula,
-            dia_vencimento
+            dia_vencimento,
+            turma_id
         } = req.body;
 
         const result = await pool.query(`
@@ -232,10 +236,11 @@ router.put('/:id', async (req, res) => {
                 responsavel = $2,
                 telefone = $3,
                 valor_mensalidade = $4,
-                data_matricula = $5
-                dia_vencimento = $6
+                data_matricula = $5,
+                dia_vencimento = $6,
+                turma_id = $7
 
-            WHERE id = $7
+            WHERE id = $8
 
             RETURNING *
 
@@ -246,9 +251,9 @@ router.put('/:id', async (req, res) => {
             telefone,
             valor_mensalidade,
             data_matricula,
-            req.params.id,
-            dia_vencimento
-
+            dia_vencimento,
+            turma_id,
+            req.params.id
         ]);
 
         res.json(result.rows[0]);
