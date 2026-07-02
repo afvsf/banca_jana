@@ -28,6 +28,27 @@ async function createTables(){
 
 
         // =====================================
+        // TABELA TURMAS
+        // =====================================
+
+        await pool.query(`
+
+            CREATE TABLE IF NOT EXISTS turmas (
+
+                id SERIAL PRIMARY KEY,
+
+                nome VARCHAR(100) UNIQUE NOT NULL,
+
+                descricao TEXT,
+
+                created_at TIMESTAMP DEFAULT NOW()
+
+            )
+
+        `);
+
+
+        // =====================================
         // TABELA ALUNOS
         // =====================================
 
@@ -49,7 +70,7 @@ async function createTables(){
 
                 status VARCHAR(20)
                 DEFAULT 'ATIVO',
-            
+
                 created_at TIMESTAMP
                 DEFAULT NOW(),
 
@@ -59,7 +80,19 @@ async function createTables(){
 
         `);
 
-  
+
+        // adiciona a coluna turma_id caso ainda não exista
+
+        await pool.query(`
+
+            ALTER TABLE alunos
+
+            ADD COLUMN IF NOT EXISTS turma_id INTEGER
+
+            REFERENCES turmas(id)
+
+        `);
+
 
         // =====================================
         // TABELA MENSALIDADES
@@ -99,9 +132,25 @@ async function createTables(){
         `);
 
 
-        console.log(
-            'Tabelas criadas com sucesso'
-        );
+        // =====================================
+        // CADASTRA AS TURMAS
+        // =====================================
+
+        await pool.query(`
+
+            INSERT INTO turmas(nome)
+            VALUES
+            ('Turma 01'),
+            ('Turma 02'),
+            ('Turma 03'),
+            ('Turma 04'),
+            ('Turma 05')
+
+            ON CONFLICT (nome) DO NOTHING
+
+        `);
+
+        console.log("Tabelas criadas com sucesso.");
 
     }catch(error){
 
