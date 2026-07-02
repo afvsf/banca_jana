@@ -22,6 +22,9 @@ require('./auth');
 const relatoriosRoutes =
 require('./relatorios');
 
+const turmasRoutes =
+require('./turmas');
+
 const app = express();
 
 app.use(cors());
@@ -49,6 +52,8 @@ app.use('/mensalidades', mensalidadesRoutes);
 app.use('/dashboard', dashboardRoutes);
 
 app.use('/relatorios', relatoriosRoutes);
+
+app.use('/turmas', turmasRoutes);
 
 
 // TESTE API
