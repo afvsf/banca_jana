@@ -9,9 +9,19 @@ router.get('/', auth, async (req, res) => {
     try {
 
         const result = await pool.query(`
-            SELECT * FROM alunos
-            ORDER BY nome ASC
-        `);
+            SELECT
+            
+                a.*,
+            
+                t.nome AS turma
+            
+            FROM alunos a
+            
+            LEFT JOIN turmas t
+            ON t.id = a.turma_id
+            
+            ORDER BY a.nome ASC
+                    `);
 
         res.json(result.rows);
 
@@ -27,10 +37,24 @@ router.get('/:id', async (req, res) => {
 
     try {
 
-        const result = await pool.query(
-            'SELECT * FROM alunos WHERE id = $1',
-            [req.params.id]
-        );
+        const result = await pool.query(`
+
+        SELECT
+        
+            a.*,
+        
+            t.nome AS turma
+        
+        FROM alunos a
+        
+        LEFT JOIN turmas t
+        ON t.id = a.turma_id
+        
+        WHERE a.id = $1
+        
+        `,[
+            req.params.id
+        ]);
 
         res.json(result.rows[0]);
 
