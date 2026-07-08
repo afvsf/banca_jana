@@ -123,6 +123,8 @@ router.post('/', async (req, res) => {
         const aluno =
             result.rows[0];
 
+        console.log("Aluno salvo:", aluno);
+
         // GERA MENSALIDADES
 
         const matricula =
@@ -148,6 +150,9 @@ router.post('/', async (req, res) => {
 
         }
 
+
+        console.log("Mês inicial:", mes);
+        console.log("Ano:", ano);
         // GERA ATÉ DEZEMBRO
 
         while(mes <= 12){
@@ -162,6 +167,8 @@ router.post('/', async (req, res) => {
                     .padStart(2,'0')
                 }`;
 
+            console.log(`Gerando mensalidade ${mes}/${ano}`);
+            
             await pool.query(`
 
                 INSERT INTO mensalidades
@@ -211,6 +218,9 @@ router.post('/', async (req, res) => {
         console.log(error);
 
         res.status(500).json(error);
+
+        console.error(error);
+        console.error(error.stack);
 
     }
 
