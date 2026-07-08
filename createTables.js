@@ -81,18 +81,41 @@ async function createTables(){
         `);
 
 
-        // adiciona a coluna turma_id caso ainda não exista
+                // Adiciona turma_id
+            await pool.query(`
+            
+                ALTER TABLE alunos
+            
+                ADD COLUMN IF NOT EXISTS turma_id INTEGER
+            
+            `);
 
-        await pool.query(`
 
+                    // Adiciona data_nascimento
+            await pool.query(`
+            
+                ALTER TABLE alunos
+            
+                ADD COLUMN IF NOT EXISTS data_nascimento DATE
+            
+            `);
+
+
+            await pool.query(`
+    
             ALTER TABLE alunos
-
-            ADD COLUMN IF NOT EXISTS turma_id INTEGER;
-            ADD COLUMN IF NOT EXISTS data_nascimento DATE;
-
-            REFERENCES turmas(id)
-
-        `);
+        
+            DROP CONSTRAINT IF EXISTS alunos_turma_id_fkey;
+        
+            ALTER TABLE alunos
+        
+            ADD CONSTRAINT alunos_turma_id_fkey
+        
+            FOREIGN KEY (turma_id)
+        
+            REFERENCES turmas(id);
+        
+            `);
 
 
         // =====================================
