@@ -70,7 +70,7 @@ router.post('/', async (req, res) => {
 
     try {
 
-        const {
+        let {
 
             nome,
             responsavel,
@@ -79,8 +79,12 @@ router.post('/', async (req, res) => {
             data_matricula,
             dia_vencimento,
             turma_id
-
+        
         } = req.body;
+        
+        if (turma_id === "") {
+            turma_id = null;
+        }
 
         // CADASTRA ALUNO
 
