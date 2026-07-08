@@ -87,7 +87,8 @@ async function createTables(){
 
             ALTER TABLE alunos
 
-            ADD COLUMN IF NOT EXISTS turma_id INTEGER
+            ADD COLUMN IF NOT EXISTS turma_id INTEGER;
+            ADD COLUMN IF NOT EXISTS data_nascimento DATE;
 
             REFERENCES turmas(id)
 
