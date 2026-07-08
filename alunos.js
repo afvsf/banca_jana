@@ -70,6 +70,9 @@ router.post('/', async (req, res) => {
 
     try {
 
+        console.log("=== NOVO CADASTRO ===");
+        console.log(req.body);
+
         let {
 
             nome,
@@ -124,6 +127,8 @@ router.post('/', async (req, res) => {
             result.rows[0];
 
         console.log("Aluno salvo:", aluno);
+        console.log("Data matrícula:", aluno.data_matricula);
+        console.log("Dia vencimento:", aluno.dia_vencimento);
 
         // GERA MENSALIDADES
 
@@ -168,6 +173,16 @@ router.post('/', async (req, res) => {
                 }`;
 
             console.log(`Gerando mensalidade ${mes}/${ano}`);
+
+              // 👇 COLOQUE AQUI
+                console.log({
+                    aluno_id: aluno.id,
+                    mes,
+                    ano,
+                    valor: aluno.valor_mensalidade,
+                    vencimento,
+                    status: 'PENDENTE'
+                        });
             
             await pool.query(`
 
