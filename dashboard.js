@@ -104,6 +104,46 @@ router.get('/', async (req, res) => {
 
 
 // ======================================
+// ANIVERSARIANTES
+// ======================================
+
+router.get('/aniversariantes', auth, async (req, res) => {
+
+    try {
+
+        const result = await pool.query(`
+
+            SELECT
+                id,
+                nome,
+                responsavel,
+                telefone,
+                data_nascimento,
+
+                EXTRACT(DAY FROM data_nascimento) AS dia
+
+            FROM alunos
+
+            WHERE
+                EXTRACT(MONTH FROM data_nascimento) =
+                EXTRACT(MONTH FROM CURRENT_DATE)
+
+            ORDER BY dia ASC
+
+        `);
+
+        res.json(result.rows);
+
+    } catch (error) {
+
+        res.status(500).json(error);
+
+    }
+
+});
+
+
+// ======================================
 // GRÁFICO MENSAL
 // ======================================
 
