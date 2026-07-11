@@ -72,18 +72,19 @@ router.post('/', async (req, res) => {
 
         console.log("=== NOVO CADASTRO ===");
         console.log(req.body);
-
+    
         let {
-
-            nome,
-            responsavel,
-            telefone,
-            valor_mensalidade,
-            data_matricula,
-            dia_vencimento,
-            turma_id
-        
-        } = req.body;
+    
+        nome,
+        responsavel,
+        telefone,
+        valor_mensalidade,
+        data_matricula,
+        data_nascimento,
+        dia_vencimento,
+        turma_id
+    
+    } = req.body;
         
         if (turma_id === "") {
             turma_id = null;
@@ -95,32 +96,30 @@ router.post('/', async (req, res) => {
 
             INSERT INTO alunos
             (
-
                 nome,
                 responsavel,
                 telefone,
                 valor_mensalidade,
                 data_matricula,
+                data_nascimento,
                 dia_vencimento,
                 turma_id
-
             )
-
+            
             VALUES
-            ($1,$2,$3,$4,$5,$6,$7)
+            ($1,$2,$3,$4,$5,$6,$7,$8)
 
             RETURNING *
 
         `, [
-
             nome,
             responsavel,
             telefone,
             valor_mensalidade,
             data_matricula,
+            data_nascimento,
             dia_vencimento,
             turma_id
-
         ]);
 
         const aluno =
